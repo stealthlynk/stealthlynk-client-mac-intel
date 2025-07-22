@@ -141,3 +141,86 @@ amnezia-libxray/
 
 # PACKAGE LOCK (keep package-lock.json for reproducible builds)
 # package-lock.json (commented out - we want to keep this)
+
+# ===== STEALTHLYNK SECURITY EXCLUSIONS =====
+# Exclude sensitive source files with hardcoded network configurations
+main.js
+networkMonitor.js
+serverManager.js
+proxyManager.js
+connectionManager.js
+
+# Exclude VPN protocol implementations
+src/protocols/
+src/vpn/
+src/tunnel/
+src/routing/
+src/encryption/
+src/stealth/
+src/network/
+src/proxy/
+
+# Exclude configuration files with sensitive data
+config/
+configs/
+*.config.js
+*.config.json
+xray-config.json
+v2ray-config.json
+vless-config.json
+trojan-config.json
+shadowsocks-config.json
+network-config.json
+proxy-config.json
+
+# Exclude server and connection data
+servers.json
+connections.json
+nodes.json
+peers.json
+endpoints.json
+
+# Exclude logs that might contain sensitive info
+logs/
+*.log
+*.log.*
+xray.log
+v2ray.log
+connection.log
+network.log
+proxy.log
+
+# Exclude binaries and executables
+bin/
+binaries/
+*.exe
+*.bin
+*.so
+*.dylib
+*.dll
+xray*
+v2ray*
+trojan*
+
+# Exclude certificates and keys
+certs/
+keys/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Exclude database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Exclude environment and secrets
+.env
+.env.*
+secrets/
+*.secret
+*.secrets
+
+# ===== END STEALTHLYNK SECURITY EXCLUSIONS =====
