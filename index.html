@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xray Reality VPN</title>
+    <link rel="icon" href="assets/icons/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10b981; /* Change from blue to green */
+            --accent-color: #059669; /* Change accent to match green theme */
+            --bg-color: #0c0c16; /* stl-dark-800 */
+            --text-color: #ffffff;
+            --secondary-bg: #191924; /* stl-dark-700 */
+            --border-color: #252532; /* stl-dark-600 */
+            --card-bg: #191924; /* stl-dark-700 */
+            --success-color: #10b981; /* Using the same green */
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+            --info-color: #10b981; /* Changed from blue to green */
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Professional UI Effects */
+        .card {
+            background-color: var(--secondary-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .glassmorphism {
+            background-color: rgba(25, 25, 36, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hide scrollbars */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        * {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 10px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #c2c3c9; /* stl-dark-100 */
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow: hidden; /* Prevent scrolling */
+            padding: 15px;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Connection tab */
+        .connection-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            max-height: 400px;
+        }
+
+        .server-info {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            background-color: rgba(25, 25, 36, 0.7);
+            padding: 1rem;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .server-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .server-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 15px 0;
+            color: var(--text-color);
+            letter-spacing: 0.02em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .server-details {
+            display: none; /* Hide server details */
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .connection-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--border-color);
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        .connection-button:hover {
+            transform: scale(1.05);
+        }
+
+        .connection-button:before {
+            content: '';
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            background-color: var(--secondary-bg);
+            top: 5%;
+            left: 5%;
+            transition: all 0.3s ease;
+        }
+
+        .connection-button:after {
+            content: 'Connect';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .connection-button.connecting:after {
+            content: 'Connecting...';
+            color: var(--warning-color);
+        }
+
+        .connection-button.connected {
+            border-color: var(--success-color);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .connection-button.connected:after {
+            content: 'Disconnect';
+        }
+
+        .connection-button.disconnecting {
+            border-color: var(--error-color);
+            box-shadow: 0 0 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .connection-button.disconnecting:after {
+            content: 'Disconnecting...';
+            color: var(--error-color);
+        }
+
+        .connection-status {
+            margin-top: 5px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .status-label {
+            font-size: 12px;
+            margin-bottom: 2px;
+            color: #aaaaaa;
+        }
+
+        .status-value {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-help-text {
+            font-size: 12px;
+            margin-bottom: 2px;
+            color: #aaaaaa;
+        }
+
+        .status-connected {
+            color: #10b981;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Green dot removed as requested */
+
+        .status-disconnected {
+            color: var(--text-color);
+        }
+
+        /* Servers tab */
+        .servers-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 400px;
+        }
+
+        .add-server {
+            margin-bottom: 10px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 1px rgba(26, 145, 255, 0.5);
+        }
+
+        .add-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-button:hover {
+            background-color: #059669; /* green to match theme */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .servers-list {
+            flex: 1;
+            overflow-y: hidden; /* Prevent scrolling */
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            max-height: 280px;
+        }
+
+        .server-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background-color: rgba(25, 25, 36, 0.5);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .server-item:hover {
+            background-color: rgba(25, 25, 36, 0.8);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .server-item.active {
+            border-left: 4px solid var(--primary-color);
+            background-color: rgba(26, 145, 255, 0.1);
+        }
+
+        .server-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .server-flag {
+            font-size: 20px;
+            margin-right: 10px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .server-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .server-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .server-address {
+            font-size: 12px;
+            color: #aaaaaa;
+        }
+
+        .server-actions {
+            display: flex;
+            margin-left: auto; /* Push to right side */
+            align-items: center;
+            gap: 15px;
+        }
+
+        .server-ping {
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .server-ping .ping-icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #95a5a6; /* Default color */
+            transition: background-color 0.3s;
+        }
+
+        .server-ping.good .ping-icon {
+            background-color: #2ecc71; /* Green for healthy */
+        }
+
+        .server-ping.poor .ping-icon {
+            background-color: #e74c3c; /* Red for unhealthy */
+        }
+
+        .server-delete {
+            background-color: transparent;
+            color: var(--error-color);
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 18px; /* Increased for emoji */
+            opacity: 0.7;
+            transition: opacity 0.3s, transform 0.2s;
+        }
+
+        .trash-icon {
+            color: #ff3b30; /* Apple red color */
+            margin-left: auto; /* Push to right */
+        }
+
+        .server-delete:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            opacity: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .notification.success {
+            background-color: var(--success-color);
+        }
+
+        .notification.error {
+            background-color: var(--error-color);
+        }
+
+        /* QR Code Scanning */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .scan-button {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .scan-button:hover {
+            background-color: rgba(26, 145, 255, 0.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            margin: 5vh auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh; /* Prevent modal from being too tall */
+        }
+
+        /* QR Scanner Styles */
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto; /* Allow body to scroll */
+            text-align: center;
+        }
+
+        #qr-scanner-container {
+            position: relative;
+            width: 100%;
+            margin: 0 auto 15px auto;
+            border-radius: 8px;
+            overflow: visible; /* Ensure content is not clipped */
+            background-color: #000;
+        }
+
+        #qr-scanner-video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .scan-region-highlight {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            border: 3px solid #10b981;
+            border-radius: 8px;
+        }
+
+        #qr-scan-result {
+            font-weight: 500;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #1e1e2d;
+        }
+
+        #qr-scan-result.success {
+            color: #10b981;
+        }
+
+        #qr-scan-result.error {
+            color: #ff3b30;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .upload-section {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .upload-section p {
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .file-input-label {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .file-input-label:hover {
+            background-color: var(--accent-color);
+        }
+
+        #qr-file-input {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        #qr-scanner-video {
+            width: 100%;
+            height: 250px;
+            background-color: #000;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        /* Toggle switch for auto-failover */
+        .option-row {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            flex-wrap: wrap;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin: 0 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .option-description {
+            font-size: 12px;
+            color: #aaa;
+            margin-left: 5px;
+            flex: 1;
+        }
+
+        /* Modern connection button with animations */
+        .connection-button {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #1e1e2d;
+            border: none;
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .connection-button.connecting {
+            color: var(--text-color);
+            border: 3px solid var(--warning-color);
+            animation: pulse-warning 1.5s infinite alternate ease-in-out;
+        }
+
+        .connection-button.disconnecting {
+            color: #ff3b30; /* Apple red color for text */
+            border: 3px solid #ff3b30; /* Red border */
+            animation: pulse-error 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-warning {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 152, 0, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(255, 152, 0, 0.7);
+            }
+        }
+
+        @keyframes pulse-error {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 59, 48, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(255, 59, 48, 0.7);
+            }
+        }
+
+        .connection-button.connected {
+            color: var(--text-color);
+            border: 3px solid #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.7);
+        }
+
+        /* Custom title styling */
+        .custom-title {
+            text-align: center;
+            padding-top: 8px;
+            margin-bottom: 4px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .stealth-title {
+            color: var(--primary-color);
+        }
+
+        .lynk-title {
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom title -->
+    <div class="custom-title" style="-webkit-app-region: drag;">
+        <a href="https://www.stealthlynk.io" id="stealthlynk-title-link" style="text-decoration:none; color:inherit;">
+            <span class="stealth-title">Stealth</span><span class="lynk-title">Lynk</span>
+        </a>
+    </div>
+
+    <div class="tabs" style="display: flex; width: 100%;">
+        <div class="tab active" data-tab="connection" style="flex: 1; text-align: center;">Connection</div>
+        <div class="tab" data-tab="servers" style="flex: 1; text-align: center;">Servers</div>
+        <div class="tab" data-tab="info" style="flex: 1; text-align: center;">Info</div>
+    </div>
+
+    <div id="connection" class="tab-content active">
+        <div class="connection-container">
+            <div class="server-info">
+                <div class="server-name" id="active-server-name">No Server Selected</div>
+                <div class="server-details" id="active-server-details">Please add a server in the Servers tab</div>
+            </div>
+
+            <div class="button-container">
+                <button id="connect-button" class="connection-button">
+                    <span id="connect-button-text">Connect</span>
+                </button>
+            </div>
+
+            <div class="connection-status">
+                <!-- Status now displayed in button, hidden redundant status -->
+                <div class="status-label" style="display:none;">Status:</div>
+                <div class="status-value status-disconnected" id="connection-status" style="display:none;">Disconnected</div>
+
+                <div class="option-row" style="margin: 15px auto; display: flex; align-items: center; justify-content: center;">
+                    <div class="status-label">Smart-connect:</div>
+                    <label class="toggle-switch" style="margin: 0 10px;">
+                        <input type="checkbox" id="auto-failover-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div class="status-label">fastest server</div>
+                </div>
+
+                <div class="status-label">Current Location:</div>
+                <div class="status-value" id="current-ip">Unknown location</div>
+
+                <div class="status-label" id="uptime-label" style="display:none;">Connection Uptime:</div>
+                <div class="status-value" id="connection-uptime" style="display:none;">00:00:00</div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div id="info" class="tab-content" style="display:none; overflow-y: auto; max-height: 100%;">
+        <div class="info-container" style="max-width: 550px; margin: 0 auto; padding: 10px 20px; color: #e0e0e0;">
+            <h2 style="color: #00ffcc; text-align: center; margin-bottom: 15px; font-size: 22px;">About StealthLynk</h2>
+
+            <p style="line-height: 1.5; margin-bottom: 12px; font-size: 14px;">
+                <span style="color: #00ffcc; font-weight: bold;">StealthLynk</span> is a decentralized marketplace and privacy network where users can launch native server and client applications. Join the network to share bandwidth securely, earn income, and maintain privacy online.
+            </p>
+
+            <div style="background: rgba(0, 255, 204, 0.1); border-left: 3px solid #00ffcc; padding: 10px; border-radius: 5px; margin: 12px 0;">
+                <h3 style="color: #00ffcc; margin: 0 0 8px 0; font-size: 16px;">With StealthLynk, you can:</h3>
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li style="padding: 5px 0 5px 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffcc;">•</span> Launch your own VPN or proxy servers
+                    </li>
+                    <li style="padding: 5px 0 5px 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffcc;">•</span> Connect to secure nodes worldwide
+                    </li>
+                    <li style="padding: 5px 0 5px 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffcc;">•</span> Monetize your internet connection
+                    </li>
+                    <li style="padding: 5px 0 5px 20px; position: relative;">
+                        <span style="position: absolute; left: 0; color: #00ffcc;">•</span> Protect your online identity
+                    </li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 12px;">
+                <h3 style="color: #00ffcc; text-align: center; margin-bottom: 10px; font-size: 16px;">Official Links</h3>
+                <div style="display: flex; justify-content: center; gap: 20px;">
+                    <!-- Website Icon -->
+                    <a href="https://www.stealthlynk.io" target="_blank" title="Website: stealthlynk.io" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(0, 255, 204, 0.1); height: 40px; width: 40px; border-radius: 50%; text-decoration: none; transition: all 0.2s; border: 1px solid rgba(0, 255, 204, 0.3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </a>
+
+                    <!-- Telegram Group Icon -->
+                    <a href="https://t.me/StealthLynk_IO" target="_blank" title="Telegram Group: StealthLynk_IO" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(0, 255, 204, 0.1); height: 40px; width: 40px; border-radius: 50%; text-decoration: none; transition: all 0.2s; border: 1px solid rgba(0, 255, 204, 0.3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8L5 12.5 9.5 14M18 8L9.5 14M18 8L14 19L9.5 14" />
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+                        </svg>
+                    </a>
+
+                    <!-- Telegram Channel Icon -->
+                    <a href="https://t.me/StealthLynk" target="_blank" title="Telegram Channel: StealthLynk" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(0, 255, 204, 0.1); height: 40px; width: 40px; border-radius: 50%; text-decoration: none; transition: all 0.2s; border: 1px solid rgba(0, 255, 204, 0.3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8L5 12.5 9.5 14M18 8L9.5 14M18 8L14 19L9.5 14" />
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" />
+                        </svg>
+                    </a>
+
+                    <!-- X.com Icon -->
+                    <a href="https://x.com/StealthLynkIO" target="_blank" title="X.com: @StealthLynkIO" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(0, 255, 204, 0.1); height: 40px; width: 40px; border-radius: 50%; text-decoration: none; transition: all 0.2s; border: 1px solid rgba(0, 255, 204, 0.3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 18L18 6M6 6L18 18" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="servers" class="tab-content">
+        <div class="servers-container">
+            <!-- Add Server Input -->
+            <div class="input-group">
+                <input type="text" id="url-input" class="url-input" placeholder="Paste VLESS Reality URL here (vless://...)">
+                <div class="button-group">
+                    <button id="add-server-button" class="add-button">Add Server</button>
+                    <button id="scan-qr-button" class="scan-button">Scan QR</button>
+                </div>
+            </div>
+
+            <div class="servers-list" id="servers-list">
+                <!-- Server items will be added here dynamically -->
+            </div>
+
+            <!-- QR Scanner Modal -->
+            <div id="qr-scanner-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close-modal">&times;</span>
+                        <h2>Scan QR Code</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div id="qr-loading-message">Loading camera...</div>
+                        <div id="qr-scan-result" style="display: none; text-align: center; margin: 10px 0; padding: 8px; border-radius: 4px;"></div>
+                        <div id="qr-scanner-container">
+                            <video id="qr-scanner-video"></video>
+                            <div class="scan-region-highlight"></div>
+                            <canvas id="qr-canvas" style="display:none;"></canvas>
+                        </div>
+                        <div class="upload-section">
+                            <p>Or use a QR code image from your Mac:</p>
+                            <label for="qr-file-input" class="file-input-label">
+                                <span>Select QR Code Image</span>
+                                <input type="file" id="qr-file-input" accept="image/*" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="node_modules/jsqr/dist/jsQR.js"></script>
+    <script>
+        // Direct button text manipulation to ensure it updates properly
+        window.addEventListener('DOMContentLoaded', () => {
+            const connectButton = document.getElementById('connect-button');
+            const connectionStatus = document.getElementById('connection-status');
+
+            // Monitor status changes and update button text accordingly
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                        if (connectionStatus.textContent === 'Connecting...') {
+                            connectButton.textContent = 'Connecting...';
+                            connectButton.classList.add('connecting');
+                        }
+                    }
+                });
+            });
+
+            // Observe both text content and children changes
+            observer.observe(connectionStatus, {
+                characterData: true,
+                childList: true,
+                subtree: true
+            });
+        });
+    </script>
+    <script src="renderer.js"></script>
+</body>
+</html>

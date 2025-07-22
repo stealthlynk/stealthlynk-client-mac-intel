@@ -1,0 +1,143 @@
+# StealthLynk Client Application - Clean .gitignore
+# Excludes temporary files, backups, and build artifacts while preserving source code
+
+# TEMPORARY & BACKUP DIRECTORIES
+temp*/
+backup*/
+*copy/
+*copy*/
+*.backup/
+*.old/
+*.tmp/
+
+# BUILD & DISTRIBUTION
+dist/
+build/
+out/
+target/
+bin/release/
+bin/debug/
+
+# NODE.JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# LOGS
+logs/
+*.log
+log/
+*.log.*
+
+# RUNTIME DATA
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# COVERAGE & TESTING
+coverage/
+.nyc_output/
+.coverage/
+*.lcov
+
+# DEPENDENCY DIRECTORIES
+jspm_packages/
+
+# TYPESCRIPT
+*.tsbuildinfo
+
+# OPTIONAL NPM CACHE
+.npm
+
+# OPTIONAL ESLINT CACHE
+.eslintcache
+
+# MICROBUNDLE CACHE
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# OPTIONAL REPL HISTORY
+.node_repl_history
+
+# OUTPUT OF 'NPM PACK'
+*.tgz
+
+# YARN INTEGRITY FILE
+.yarn-integrity
+
+# DOTENV ENVIRONMENT VARIABLES
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# PARCEL-BUNDLER CACHE
+.cache
+.parcel-cache
+
+# NEXT.JS BUILD OUTPUT
+.next
+
+# NUXT.JS BUILD / GENERATE OUTPUT
+.nuxt
+dist
+
+# GATSBY FILES
+.cache/
+public
+
+# STORYBOOK BUILD OUTPUTS
+.out
+.storybook-out
+
+# TEMPORARY FOLDERS
+tmp/
+temp/
+
+# EDITOR DIRECTORIES AND FILES
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS GENERATED FILES
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ELECTRON BUILD ARTIFACTS
+app/dist/
+release-builds/
+dist-electron/
+
+# CERTIFICATES & KEYS (if any)
+*.p12
+*.key
+*.pem
+*.crt
+*.cer
+
+# COMPRESSED FILES
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# EMBEDDED GIT REPOSITORIES
+amnezia-libxray/
+*.git/
+
+# PACKAGE LOCK (keep package-lock.json for reproducible builds)
+# package-lock.json (commented out - we want to keep this)

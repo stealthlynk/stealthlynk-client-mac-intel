@@ -1,0 +1,82 @@
+{
+  "name": "StealthLynk-Client",
+  "version": "1.0.0",
+  "description": "StealthLynk Client for VPN",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:mac-arm64": "electron-builder --mac --arm64",
+    "build:mac-x64": "electron-builder --mac --x64",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "express": "^4.18.2",
+    "http-proxy-agent": "^7.0.2",
+    "https-proxy-agent": "^7.0.6",
+    "jsqr": "^1.4.0",
+    "qr-scanner": "^1.4.2",
+    "socks-proxy-agent": "^8.0.1",
+    "tcp-ping": "^0.1.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@electron/notarize": "^3.0.1",
+    "electron": "^26.0.0",
+    "electron-builder": "24.6.3"
+  },
+  "build": {
+    "appId": "io.stealthlynk",
+    "productName": "StealthLynk Client App",
+    "afterSign": null,
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dmg",
+      "icon": "assets/icons/logo.png",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "identity": "Viktor Pavlyshyn (C9X2WT7AA5)",
+      "notarize": false,
+      "extendInfo": {
+        "NSCameraUsageDescription": "StealthLynk needs camera access to scan QR codes for adding servers",
+        "NSMicrophoneUsageDescription": "StealthLynk does not use the microphone"
+      }
+    },
+    "extraResources": [
+      {
+        "from": "bin",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "files": [
+      "**/*",
+      "!**/backup{,/**}",
+      "!**/backup1{,/**}",
+      "!**/backup2{,/**}",
+      "!**/backup3{,/**}",
+      "!**/backup4{,/**}",
+      "!**/backup5{,/**}",
+      "!**/backup-auto{,/**}",
+      "!**/temp{,/**}",
+      "!dist{,/**}",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes}",
+      "!**/node_modules/sharp/**/*"
+    ]
+  }
+}
